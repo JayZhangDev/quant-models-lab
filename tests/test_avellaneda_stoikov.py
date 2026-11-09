@@ -50,7 +50,7 @@ def test_spread_shrinks_as_time_runs_out() -> None:
 
 
 def test_spread_matches_the_paper_average() -> None:
-    # The paper reports an average spread of 1.49 for gamma = 0.1.
+    # Average of the spread formula over the session at gamma = 0.1 (hand-checked: 1.49).
     mean_spread = np.mean([optimal_spread(t, PARAMS) for t in np.arange(200) * PARAMS.dt])
     assert mean_spread == pytest.approx(1.49, abs=0.01)
 
