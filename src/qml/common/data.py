@@ -119,11 +119,18 @@ def get_prices(
         return pd.read_csv(path, index_col="date", parse_dates=True)
 
     logger.info("Downloading %d tickers from Yahoo Finance (%s to %s)", len(tickers), start, end)
-    prices = _download(tickers, start, end)
+    prices = _download(tickers, start, end).dropna(axis=1, how="all")
+
+    # Yahoo sometimes fails a healthy ticker when many are requested at once, so ask
+    # one more time for anything that came back empty before giving up on it.
+    missing = [t for t in tickers if t not in prices.columns]
+    if missing and len(missing) < len(tickers):
+        logger.info("Retrying %d tickers that returned no data", len(missing))
+        retry = _download(missing, start, end).dropna(axis=1, how="all")
+        prices = pd.concat([prices, retry], axis=1)
 
     # A delisted or misspelled ticker comes back as a column of NaN (or not at all).
     # Dropping it with a warning beats crashing a 300-stock run over one bad symbol.
-    prices = prices.dropna(axis=1, how="all")
     missing = [t for t in tickers if t not in prices.columns]
     if missing:
         logger.warning("Dropped %d tickers with no data: %s", len(missing), ", ".join(missing))

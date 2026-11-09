@@ -1,0 +1,2 @@
+n_stocks,n_days,q,sigma2,lambda_minus,lambda_plus,largest_eigenvalue,market_share_of_variance,signal_eigenvalues,noise_eigenvalues
+300,1003,0.29910269192422734,0.3566328704371843,0.07321567861529787,0.8533897654119226,71.7546347323268,0.2391821157744227,61,239
