@@ -1,0 +1,10 @@
+parameter,value
+X,1e+06
+T,5
+n_steps,65
+s0,50
+sigma,0.95
+eta,2.5e-06
+gamma,2.5e-07
+epsilon,0.0625
+daily_volume,5e+06
