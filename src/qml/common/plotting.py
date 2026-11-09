@@ -145,7 +145,9 @@ def to_markdown(df: pd.DataFrame, float_format: str = "{:.4f}") -> str:
     # Written by hand so the project does not need the extra `tabulate` dependency
     # that pandas' own to_markdown() requires.
     def fmt(value: object) -> str:
-        return float_format.format(value) if isinstance(value, float) else str(value)
+        if isinstance(value, float):
+            return "n/a" if value != value else float_format.format(value)  # NaN != NaN
+        return str(value)
 
     header = "| " + " | ".join(str(c) for c in df.columns) + " |"
     divider = "| " + " | ".join("---" for _ in df.columns) + " |"
@@ -181,5 +183,8 @@ def save_table(
     out_dir.mkdir(parents=True, exist_ok=True)
     csv_path = out_dir / f"{name}.csv"
     df.to_csv(csv_path, index=False, lineterminator="\n")
-    (out_dir / f"{name}.md").write_text(to_markdown(df, float_format), encoding="utf-8")
+    # Forcing Unix line endings keeps the files byte-for-byte identical no matter
+    # which operating system produced them.
+    markdown = to_markdown(df, float_format)
+    (out_dir / f"{name}.md").write_text(markdown, encoding="utf-8", newline="\n")
     return csv_path
