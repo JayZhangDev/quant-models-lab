@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+
+# Secrets (this project needs none, but never commit one by accident)
+.env
+.env.*
+
+# Downloaded market data: re-created by the experiments, not stored in git
+data/raw/
+data/cache/
+
+# macOS / Windows / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "quant-models-lab"
+version = "0.1.0"
+description = "Four classic quant models - random matrix theory, market making, Kalman pairs trading, optimal execution - implemented, tested and backtested in Python"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Jay Zhang" }]
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pandas>=2.1",
+    "matplotlib>=3.8",
+    "yfinance>=0.2.50",
+    "statsmodels>=0.14",
+]
+
+# Tools only needed while developing. `uv sync` installs this group by default.
+[dependency-groups]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/qml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src"]
+
+[tool.ruff.lint]
+# E/F: basic errors, I: import order, UP: modern syntax, B: likely bugs,
+# NPY: NumPy pitfalls (e.g. the legacy global random state), SIM: simplifications.
+select = ["E", "F", "I", "UP", "B", "NPY", "SIM"]
