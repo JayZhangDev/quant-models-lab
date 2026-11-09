@@ -1,5 +1,5 @@
 noise_threshold_rule,realized_vol
-No cleaning (raw),0.19681022643500604
-sigma2 fitted to the histogram (used above),0.09935129955901681
-sigma2 = 1 - largest eigenvalue / N,0.10018202724007469
-"sigma2 = 1 (textbook, ignores the market factor)",0.10242938138791972
+No cleaning (raw),0.1968101363513814
+sigma2 fitted to the histogram (used above),0.09935142504109927
+sigma2 = 1 - largest eigenvalue / N,0.10018205826618358
+"sigma2 = 1 (textbook, ignores the market factor)",0.10242936946710594

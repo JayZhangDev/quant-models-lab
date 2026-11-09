@@ -4,4 +4,4 @@
 | Cleaned covariance | shorting allowed | 0.056 | 0.099 | 1.776 | 0.157 | 1.518 | -0.076 | 0.723 |
 | Raw covariance | long-only | 0.082 | 0.097 | 1.180 | 0.174 | 1.715 | -0.087 | 0.209 |
 | Cleaned covariance | long-only | 0.082 | 0.096 | 1.164 | 0.170 | 1.690 | -0.086 | 0.202 |
-| Equal weight | benchmark | nan | 0.131 | nan | 0.200 | 1.457 | -0.154 | 0.000 |
+| Equal weight | benchmark | n/a | 0.131 | n/a | 0.200 | 1.457 | -0.154 | 0.000 |
