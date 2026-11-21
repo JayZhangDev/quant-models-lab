@@ -23,7 +23,7 @@ Every number above is produced by the scripts in [`experiments/`](experiments) a
 make setup && make run-all
 ```
 
-`make setup` creates a virtual environment with [uv](https://docs.astral.sh/uv/) and installs the package. `make run-all` runs the four experiments (about a minute; the first run downloads prices from Yahoo Finance and caches them in `data/cache/`). `make test` runs the 79 unit tests and `make lint` runs ruff.
+`make setup` creates a virtual environment with [uv](https://docs.astral.sh/uv/) and installs the package. `make run-all` runs the four experiments (about a minute; the first run downloads prices from Yahoo Finance and caches them in `data/cache/`). `make test` runs the unit tests and `make lint` runs ruff.
 
 No `make` (for example on Windows)? Run the same commands directly:
 
@@ -206,6 +206,10 @@ $x(t)$ is the number of shares still held, $\eta$ the temporary impact and $\sig
 
 ---
 
+## Case studies
+
+- **[NVIDIA, November 2026](case_studies/nvda_2026/README.md):** how much of NVDA's fall after its board announced an investigation into its CEO was the news, and how much was the market, the chip sector, or an earlier slide? An event study with a placebo test and peer check, plus all four models above applied to the event. Main result: a day-0 abnormal return of **−8.5% (t = −5.0)** and **−13.5% over three days**; only 0.2% of 1,000 random dates were lower. Research only, not investment advice.
+
 ## Project layout
 
 ```
@@ -215,8 +219,10 @@ src/qml/
   market_making/   Avellaneda-Stoikov simulator and quoting strategies
   pairs/           Kalman filter, rolling OLS, z-score backtester
   execution/       Almgren-Chriss trajectories, frontier, Monte Carlo
+  events/          reusable event-study code (abnormal returns, CARs, placebo test)
 experiments/       one runnable script per model
-tests/             79 unit tests, all on synthetic data (no network)
+case_studies/      applied studies (nvda_2026/: event study + the four models on NVDA)
+tests/             unit tests, all on synthetic data (no network)
 results/           figures and tables produced by the experiments
 docs/              a plain-English explanation of each model
 ```
