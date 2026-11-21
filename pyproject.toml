@@ -17,6 +17,7 @@ dependencies = [
     "matplotlib>=3.8",
     "yfinance>=0.2.50",
     "statsmodels>=0.14",
+    "pyyaml>=6.0.3",
 ]
 
 # Tools only needed while developing. `uv sync` installs this group by default.

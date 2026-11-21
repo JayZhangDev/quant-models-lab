@@ -20,7 +20,7 @@ def _fake_prices(tickers: list[str]) -> pd.DataFrame:
 def test_get_prices_uses_cache_on_second_call(tmp_path: Path, monkeypatch) -> None:
     calls: list[int] = []
 
-    def fake_download(tickers, start, end):
+    def fake_download(tickers, start, end, field="Close"):
         calls.append(1)
         return _fake_prices(list(tickers))
 
@@ -33,7 +33,7 @@ def test_get_prices_uses_cache_on_second_call(tmp_path: Path, monkeypatch) -> No
 
 
 def test_get_prices_drops_failed_tickers(tmp_path: Path, monkeypatch, caplog) -> None:
-    def fake_download(tickers, start, end):
+    def fake_download(tickers, start, end, field="Close"):
         prices = _fake_prices(list(tickers))
         prices["DEAD"] = np.nan  # what Yahoo returns for a delisted symbol
         return prices
@@ -47,7 +47,9 @@ def test_get_prices_drops_failed_tickers(tmp_path: Path, monkeypatch, caplog) ->
 
 
 def test_get_prices_raises_when_nothing_downloads(tmp_path: Path, monkeypatch) -> None:
-    monkeypatch.setattr(data, "_download", lambda tickers, start, end: pd.DataFrame())
+    monkeypatch.setattr(
+        data, "_download", lambda tickers, start, end, field="Close": pd.DataFrame()
+    )
     with pytest.raises(RuntimeError):
         data.get_prices(["AAA"], "2024-01-01", "2024-01-08", cache_dir=tmp_path)
 
@@ -106,3 +108,17 @@ def test_turnover_counts_one_way_trading() -> None:
 def test_to_markdown_has_header_divider_and_rows() -> None:
     table = to_markdown(pd.DataFrame({"name": ["a"], "value": [1.23456]}), "{:.2f}")
     assert table.splitlines() == ["| name | value |", "| --- | --- |", "| a | 1.23 |"]
+
+
+def test_volume_requests_use_their_own_cache_file(tmp_path: Path, monkeypatch) -> None:
+    fields: list[str] = []
+
+    def fake_download(tickers, start, end, field="Close"):
+        fields.append(field)
+        return _fake_prices(list(tickers))
+
+    monkeypatch.setattr(data, "_download", fake_download)
+    data.get_prices(["AAA"], "2024-01-01", "2024-01-08", cache_dir=tmp_path)
+    data.get_prices(["AAA"], "2024-01-01", "2024-01-08", cache_dir=tmp_path, field="Volume")
+    assert fields == ["Close", "Volume"]  # the volume call did not reuse the price cache
+    assert {p.name.split("_")[0] for p in tmp_path.iterdir()} == {"prices", "volume"}

@@ -44,17 +44,20 @@ def load_universe(path: Path | str) -> list[str]:
     return tickers
 
 
-def _cache_path(tickers: Sequence[str], start: str, end: str, cache_dir: Path) -> Path:
+def _cache_path(
+    tickers: Sequence[str], start: str, end: str, cache_dir: Path, field: str = "Close"
+) -> Path:
     """Build a cache file name that is unique to this exact request."""
     # A short hash of the request means "same tickers + same dates" always maps to the
     # same file, while any change (one extra ticker, a new end date) gets a new file.
     key = ",".join(sorted(tickers)) + f"|{start}|{end}"
     digest = hashlib.sha256(key.encode()).hexdigest()[:10]
-    return cache_dir / f"prices_{start}_{end}_{len(tickers)}tickers_{digest}.csv"
+    prefix = "prices" if field == "Close" else field.lower()  # keeps old cache names valid
+    return cache_dir / f"{prefix}_{start}_{end}_{len(tickers)}tickers_{digest}.csv"
 
 
-def _download(tickers: Sequence[str], start: str, end: str) -> pd.DataFrame:
-    """Download adjusted closing prices from Yahoo Finance, a batch at a time."""
+def _download(tickers: Sequence[str], start: str, end: str, field: str = "Close") -> pd.DataFrame:
+    """Download one daily field (adjusted close by default) from Yahoo Finance in batches."""
     # Imported here (not at the top) so the unit tests, which never touch the
     # network, do not need yfinance to be importable.
     import yfinance as yf
@@ -67,7 +70,7 @@ def _download(tickers: Sequence[str], start: str, end: str) -> pd.DataFrame:
         raw = yf.download(batch, start=start, end=end, auto_adjust=True, progress=False)
         if raw is None or raw.empty:
             continue
-        close = raw["Close"]
+        close = raw[field]
         if isinstance(close, pd.Series):  # a single ticker can come back as a Series
             close = close.to_frame(batch[0])
         frames.append(close)
@@ -85,8 +88,9 @@ def get_prices(
     end: str,
     cache_dir: Path | str = CACHE_DIR,
     refresh: bool = False,
+    field: str = "Close",
 ) -> pd.DataFrame:
-    """Get daily adjusted closing prices, using the local cache when possible.
+    """Get daily adjusted closing prices (or another field), using the local cache.
 
     Parameters
     ----------
@@ -98,6 +102,9 @@ def get_prices(
         Folder for cached CSV files. Defaults to ``data/cache/``.
     refresh : bool, optional
         If True, ignore any cached file and download again.
+    field : str, optional
+        Which daily column to return: ``"Close"`` (adjusted close, the default) or
+        ``"Volume"`` (shares traded).
 
     Returns
     -------
@@ -112,21 +119,21 @@ def get_prices(
     """
     tickers = list(dict.fromkeys(t.upper() for t in tickers))  # de-duplicate, keep order
     cache_dir = Path(cache_dir)
-    path = _cache_path(tickers, start, end, cache_dir)
+    path = _cache_path(tickers, start, end, cache_dir, field)
 
     if path.exists() and not refresh:
         logger.info("Loading prices from cache: %s", path.name)
         return pd.read_csv(path, index_col="date", parse_dates=True)
 
     logger.info("Downloading %d tickers from Yahoo Finance (%s to %s)", len(tickers), start, end)
-    prices = _download(tickers, start, end).dropna(axis=1, how="all")
+    prices = _download(tickers, start, end, field=field).dropna(axis=1, how="all")
 
     # Yahoo sometimes fails a healthy ticker when many are requested at once, so ask
     # one more time for anything that came back empty before giving up on it.
     missing = [t for t in tickers if t not in prices.columns]
     if missing and len(missing) < len(tickers):
         logger.info("Retrying %d tickers that returned no data", len(missing))
-        retry = _download(missing, start, end).dropna(axis=1, how="all")
+        retry = _download(missing, start, end, field=field).dropna(axis=1, how="all")
         prices = pd.concat([prices, retry], axis=1)
 
     # A delisted or misspelled ticker comes back as a column of NaN (or not at all).
