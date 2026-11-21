@@ -1,0 +1,3 @@
+statistic,real_value,placebo_mean,placebo_1st_percentile,percent_of_placebo_at_or_below_real
+"CAR [0,+2]",-0.13513682508040273,-0.0008847455838241557,-0.07740165218657379,0.2
+"Standardized CAR [0,+2]",-4.641137795121055,-0.0243174716736606,-2.8170800464480434,0.1

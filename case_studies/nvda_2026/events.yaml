@@ -1,0 +1,139 @@
+# Key dates for the NVDA case study, checked against news reports and daily price data.
+#
+# date          = the calendar date of the news, as reported.
+# trading_day   = the first trading day whose close could reflect it. News on a weekend,
+#                 or after the 4 p.m. ET close, is first priced on the next trading day.
+# role          = how the analysis uses the date:
+#                   main_event   -> day 0 of the event study
+#                   prior_event  -> analysed separately, never mixed into the main windows
+#                   in_window    -> later news inside the post-event window (marked on charts)
+#                   confound     -> must be kept out of the event windows
+#
+# Descriptions only repeat what the linked sources report. Last checked: 2026-11-21.
+
+events:
+  - id: nyt_report
+    date: 2026-10-29
+    trading_day: 2026-10-29
+    role: prior_event
+    label: "NYT report (Oct 29)"
+    description: >
+      The New York Times reported that U.S. officials had been investigating Alice Huang,
+      an executive at Megaspeed (a Singapore-based buyer of Nvidia chips), and described a
+      close relationship between her and Jensen Huang. Nvidia denied anything unusual.
+      The publication time is not confirmed, so the analysis treats Oct 29 and Oct 30
+      together as a two-day window.
+    sources:
+      - https://techcrunch.com/2026/11/12/nvidia-ceo-jensen-huangs-affair-with-alleged-chinese-spy-a-timeline/
+      - https://www.cbsnews.com/news/nvidia-jensen-huang-investigation-china-intelligence/
+
+  - id: house_letter
+    date: 2026-11-05
+    trading_day: 2026-11-05
+    role: in_window
+    label: "House chairs request briefing"
+    description: >
+      Three House Republican committee chairs asked Huang for a closed-door briefing on
+      his dealings with Alice Huang.
+    sources:
+      - https://techcrunch.com/2026/11/12/nvidia-ceo-jensen-huangs-affair-with-alleged-chinese-spy-a-timeline/
+      - https://finance.yahoo.com/markets/stocks/articles/nvidia-erases-2026-gains-republicans-204550552.html
+
+  - id: board_investigation
+    date: 2026-11-08
+    trading_day: 2026-11-09
+    role: main_event
+    label: "Board probe announced (Sun)"
+    description: >
+      On Sunday, Nov 8, Nvidia's board announced an independent investigation and Huang
+      acknowledged a personal relationship in a message to employees. Reports cited U.S.
+      officials' suspicion that Alice Huang was a Chinese intelligence asset; the board
+      said it had no reason to believe national security or Nvidia secrets were
+      compromised. Monday, Nov 9 is the first trading day after the news.
+    sources:
+      - https://nvidianews.nvidia.com/news/statement-from-nvidia-board-of-directors
+      - https://www.cnbc.com/2026/11/08/nvidia-jensen-huang-investigation-china-spy.html
+      - https://www.cbsnews.com/news/nvidia-jensen-huang-investigation-china-intelligence/
+
+  - id: class_action
+    date: 2026-11-09
+    trading_day: 2026-11-09
+    role: in_window
+    label: "class action filed"
+    description: >
+      A proposed securities class action (Kistenmacher v. NVIDIA Corporation, et al.,
+      case no. 5:26-cv-13448) was filed against Nvidia and Huang, alleging shareholders
+      were misled. It is a claim, not a finding.
+    sources:
+      - https://www.classaction.org/news/nvidia-facing-securities-class-action-over-stock-drop-linked-to-reported-jensen-huang-affair-with-suspected-chinese-spy
+      - https://finance.yahoo.com/markets/stocks/articles/nvidia-erases-2026-gains-republicans-204550552.html
+
+  - id: subpoena_threat
+    date: 2026-11-10
+    trading_day: 2026-11-10
+    role: in_window
+    label: "Subpoena threat"
+    description: >
+      House Foreign Affairs Chairman Brian Mast said he was prepared to subpoena Huang
+      unless he responded to the briefing request by Nov 11. No subpoena had been issued
+      at the time of the report.
+    sources:
+      - https://finance.yahoo.com/markets/stocks/articles/nvidia-erases-2026-gains-republicans-204550552.html
+      - https://decrypt.co/382974/nvidia-erases-2026-gains-republicans-threaten-ceo-subpoena
+
+  - id: resignation
+    date: 2026-11-12
+    trading_day: 2026-11-12
+    role: in_window
+    label: "Huang resigns as CEO"
+    description: >
+      Nvidia announced that Huang resigned as President, CEO and board member, effective
+      immediately, and that CFO Colette Kress would serve as interim CEO. The evening
+      before (Nov 11, after the close), the Wall Street Journal reported the board was
+      meeting on Huang's future. CNBC reported the decision was made that morning, so
+      Nov 12 is the first trading day that could reflect both. (Nvidia's 8-K is dated
+      Nov 11, the day the board accepted the resignation; the release is dated Nov 12.)
+    sources:
+      - https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000082/nvidiaannouncesceotransiti.htm
+      - https://www.cnbc.com/2026/11/12/nvidia-jensen-huang-ceo-live-updates.html
+      - https://techcrunch.com/2026/11/12/nvidia-ceo-jensen-huangs-affair-with-alleged-chinese-spy-a-timeline/
+
+  - id: investor_letter
+    date: 2026-11-14
+    trading_day: 2026-11-16
+    role: in_window
+    label: "Investors' letter to board (Sat)"
+    description: >
+      Two major shareholders sent a public letter asking the board to run a deliberate CEO
+      search that keeps a possible return of Huang on the table. Saturday news, so Monday
+      Nov 16 is the first trading day that could reflect it.
+    sources:
+      - https://www.cnbc.com/2026/11/14/nvidia-investors-jensen-huang-return-board-letter.html
+
+  - id: earnings
+    date: 2026-11-17
+    trading_day: 2026-11-18
+    role: confound
+    label: "Q3 FY27 earnings (after close)"
+    description: >
+      Nvidia reported third-quarter fiscal 2027 results on Tuesday, Nov 17, after the
+      market close: revenue of $115.8 billion and fourth-quarter guidance of $130 billion,
+      plus or minus 3%. Reports said the shares fell about 2.9% on Wednesday, Nov 18. The
+      scandal windows stop before Nov 17; earnings are analysed as a separate event.
+    sources:
+      - https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-third-quarter-fiscal-2027
+      - https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Sets-Conference-Call-for-Third-Quarter-Financial-Results/default.aspx
+      - https://www.cnbc.com/2026/11/18/nvidia-stock-earnings.html
+
+  - id: ai_selloff
+    date: 2026-11-20
+    trading_day: 2026-11-20
+    role: confound
+    label: "Market-wide AI/chip sell-off"
+    description: >
+      A broad sell-off in AI and semiconductor stocks: the Nasdaq Composite fell 5.3% and
+      the S&P 500 3.7%. Not specific to Nvidia; it overlaps any earnings window longer
+      than one day, which is why the earnings analysis uses day 0 only.
+    sources:
+      - https://www.upi.com/Top_News/US/2026/11/20/stocks-dow-jones-nasdaq-correction-territory/1061795214998/
+      - https://finance.yahoo.com/markets/stocks/articles/stock-market-midday-nov-20-172002057.html
